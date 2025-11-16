@@ -1,9 +1,20 @@
+
 import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import router from './router'
 
-const app = createApp(App)
+import Home from './components/Home.vue'
+import Auth from './components/Auth.vue'
 
-app.use(router)
+const routes = [
+    { path: '/', component: Home },
+    { path: '/auth/google', component: Auth}
+];
 
-app.mount('#app')
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
+});
+
+const app = createApp(App).use(router).mount('#app')
+

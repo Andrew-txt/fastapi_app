@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 def generate_redirect_google_uri():
     query_params = {
         "client_id": settings.GOOGLE_CLIENT_ID,
-        "redirect_uri": "http://localhost:4000/auth/google",
+        "redirect_uri": "http://localhost:3000/auth/google",
         "response_type": "code",
         "scope": " ".join([
             "openid",

@@ -1,21 +1,61 @@
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Annotated
 import uvicorn
+import aiohttp
+from oauth_google import settings
 
 from oauth_google import generate_redirect_google_uri
+import jwt
+
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/auth/google/url")
 def get_google_oauth_uri():
     uri = generate_redirect_google_uri()
     return RedirectResponse(uri, status_code=302)
 
-# if __name__ == "__main__":
-#     uvicorn.run(
-#         "main:app",
-#         host="127.0.0.1",
-#         port=8000,
-#         reload=True, 
-#         log_level="info"
-#     )
+
+@app.post("/auth/google/callback")
+async def handle_code(
+    code: Annotated[str, Body(embed=True)] # type: ignore
+): 
+    google_token_url = "https://oauth2.googleapis.com/token"
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            url=google_token_url,
+            data={
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "grant_type": "authorization_code",
+                "redirect_uri": "http://localhost:3000/auth/google",
+                "code": code,
+            }
+        ) as response:
+            res = await response.json()
+            # print(f"{res=}")
+            id_token = res["id_token"]
+
+            user_data = jwt.decode(
+                id_token,
+                algorithms=["RS256"],
+                options={"verify_signature": False}
+            )
+    
+    return {"user": user_data}
+
+
+@app.get("/auth/check")
+async def check_user_auth():
+    ...
