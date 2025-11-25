@@ -1,13 +1,7 @@
 import urllib.parse
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
-
-
-class Settings(BaseSettings):
-    GOOGLE_CLIENT_ID: str
-    GOOGLE_CLIENT_SECRET: str
-
-    model_config = SettingsConfigDict(env_file=".env") 
+import jwt
 
 
 def generate_redirect_google_uri():
@@ -21,10 +15,33 @@ def generate_redirect_google_uri():
             "profile"
         ]),
         "access_type": "offline",
-        # state потом
+        # state 
     }
     query_str = urllib.parse.urlencode(query_params, quote_via=urllib.parse.quote)
     base_url = "https://accounts.google.com/o/oauth2/v2/auth"
     return f"{base_url}?{query_str}"
+
+
+class Settings(BaseSettings):
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+    DB_PASSWORD: str
+
+    model_config = SettingsConfigDict(env_file=".env") 
+
+def get_user_account_data(token):
+    given_data = jwt.decode(
+    token,
+    algorithms=["RS256"],options={"verify_signature": False}
+    )
+    
+    user_data = {
+        "email": given_data["email"],
+        "name": given_data["name"],
+        "picture": given_data["picture"]
+    }
+    
+    return {"user": user_data}
+
 
 settings = Settings()

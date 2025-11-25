@@ -4,11 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 import uvicorn
 import aiohttp
-from oauth_google import settings
+from utils import settings
 
-from oauth_google import generate_redirect_google_uri
+from utils import generate_redirect_google_uri, get_user_account_data
 import jwt
-
 
 app = FastAPI()
 
@@ -44,16 +43,11 @@ async def handle_code(
             }
         ) as response:
             res = await response.json()
-            # print(f"{res=}")
             id_token = res["id_token"]
+            
+            return get_user_account_data(token=id_token)
+        
 
-            user_data = jwt.decode(
-                id_token,
-                algorithms=["RS256"],
-                options={"verify_signature": False}
-            )
-    
-    return {"user": user_data}
 
 
 @app.get("/auth/check")
