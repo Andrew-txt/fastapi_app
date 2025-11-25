@@ -2,6 +2,7 @@ import urllib.parse
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 import jwt
+from typing import Optional
 
 
 def generate_redirect_google_uri():
@@ -45,3 +46,10 @@ def get_user_account_data(token):
 
 
 settings = Settings()
+
+
+def check_if_columm_in_table(cursor, table_name, column_name, arr: Optional[dict]):
+    if arr is not None:
+        for key in arr:
+            ...
+

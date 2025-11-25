@@ -11,12 +11,22 @@ conn = psycopg2.connect(
     password = settings.DB_PASSWORD
 )
 
+query = """SELECT column_name
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'users' 
+  AND column_name = 'smth'"""
+
 curs = conn.cursor()
-curs.execute("SELECT * FROM users")
+curs.execute(query)
+
+# SELECT column_name
+# FROM information_schema.columns
+# WHERE table_schema = 'public'
+#   AND table_name = 'users' 
+#   AND column_name = 'name';
 
 
-
-
-# rows = curs.fetchall()
-# for row in rows:
-#     print(row)
+rows = curs.fetchall()
+for row in rows:
+    print(row)
