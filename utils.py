@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 import jwt
 from typing import Optional
 
-
 def generate_redirect_google_uri():
     query_params = {
         "client_id": settings.GOOGLE_CLIENT_ID,
@@ -42,14 +41,31 @@ def get_user_account_data(token):
         "picture": given_data["picture"]
     }
     
-    return {"user": user_data}
+    return user_data
 
 
 settings = Settings()
 
 
-def check_if_columm_in_table(cursor, table_name, column_name, arr: Optional[dict]):
-    if arr is not None:
-        for key in arr:
-            ...
+# функция проверит есть ли стобец в нужной таблицу в дб, получив их на прямую или через словарь
+
+
+
+
+
+
+
+
+
+
+
+# # Данные для добавления
+# product_name = "Новый товар"
+# product_description = "Описание нового товара"
+
+# # SQL-запрос с параметрами
+# sql = "INSERT INTO products (name, description) VALUES (%s, %s)"
+
+# # Выполнение запроса с параметрами
+# cursor.execute(sql, (product_name, product_description))
 
