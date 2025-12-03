@@ -36,9 +36,9 @@ export default {
                 return res.json()
             })
             .then(data => {
-                this.picUrl = data.user.picture
+                this.picUrl = data.picture
                 data.email
-                this.userName = data.user.name
+                this.userName = data.name
             })
         } else {
             this.message = 'No "code" parameter';

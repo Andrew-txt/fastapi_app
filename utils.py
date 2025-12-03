@@ -3,7 +3,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 import jwt
 from typing import Optional
+from psycopg2 import sql
+from db import add_user_data_to_db, conn
 
+# from db import add_data_to_db, curs
+
+
+# сгенерирует редиректный юрл и вернет его / работает
 def generate_redirect_google_uri():
     query_params = {
         "client_id": settings.GOOGLE_CLIENT_ID,
@@ -29,6 +35,8 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env") 
 
+
+# здесь получим данные пользователя нужные нам и упакуем в словарь/ работает
 def get_user_account_data(token):
     given_data = jwt.decode(
     token,
@@ -40,32 +48,14 @@ def get_user_account_data(token):
         "name": given_data["name"],
         "picture": given_data["picture"]
     }
-    
+    add_user_data_to_db(conn, user_data)
     return user_data
 
 
 settings = Settings()
 
 
-# функция проверит есть ли стобец в нужной таблицу в дб, получив их на прямую или через словарь
 
 
 
-
-
-
-
-
-
-
-
-# # Данные для добавления
-# product_name = "Новый товар"
-# product_description = "Описание нового товара"
-
-# # SQL-запрос с параметрами
-# sql = "INSERT INTO products (name, description) VALUES (%s, %s)"
-
-# # Выполнение запроса с параметрами
-# cursor.execute(sql, (product_name, product_description))
 
